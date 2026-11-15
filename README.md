@@ -4,7 +4,7 @@
 
 **Personal website and writing of Sissy Themeli, Staff Software Engineer.**
 
-[![Deploy](https://github.com/sissythem/themeli.me/actions/workflows/deploy.yml/badge.svg)](https://github.com/sissythem/themeli.me/actions/workflows/deploy.yml)
+[![Deploy](https://github.com/sissythem/personal-website/actions/workflows/deploy.yml/badge.svg)](https://github.com/sissythem/personal-website/actions/workflows/deploy.yml)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fthemeli.me&label=themeli.me&up_message=online&down_message=offline)](https://themeli.me)
 [![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)](https://astro.build/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
