@@ -1,0 +1,13 @@
+---
+import { profile } from "@/data/profile";
+---
+
+<footer class="footer">
+  <div class="wrap">
+    <span>© {new Date().getFullYear()} {profile.name}</span>
+    <ul>
+      {profile.socials.map((social) => <li><a href={social.url} rel="me noopener">{social.label}</a></li>)}
+      <li><a href="/rss.xml">RSS</a></li>
+    </ul>
+  </div>
+</footer>

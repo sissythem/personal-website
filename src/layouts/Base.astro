@@ -1,0 +1,42 @@
+---
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
+import "@/styles/global.css";
+import SiteNav from "@/components/SiteNav.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import { profile } from "@/data/profile";
+
+interface Props {
+  title?: string;
+  description?: string;
+  section?: "home" | "writing";
+}
+
+const { title, description = profile.tagline, section = "home" } = Astro.props;
+const pageTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#121214" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title={`${profile.name} · Writing`} href="/rss.xml" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={section === "writing" && title ? "article" : "website"} />
+    <meta property="og:url" content={canonical} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <SiteNav section={section} />
+    <main id="main"><slot /></main>
+    <SiteFooter />
+  </body>
+</html>

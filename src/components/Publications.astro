@@ -1,0 +1,21 @@
+---
+import { publications } from "@/data/profile";
+---
+
+<section class="section" id="publications">
+  <h2 class="section-title">Publications</h2>
+  <ul class="cards">
+    {publications.map((publication) => (
+      <li>
+        <article class="card">
+          <span class="meta">{publication.year} · {publication.venue}</span>
+          <h3>{publication.title}</h3>
+          <p>{publication.authors}</p>
+          <div class="links">
+            {publication.links.map((link) => <a href={link.url} rel="noopener">{link.label}</a>)}
+          </div>
+        </article>
+      </li>
+    ))}
+  </ul>
+</section>

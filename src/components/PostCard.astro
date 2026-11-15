@@ -1,0 +1,19 @@
+---
+import { formatDay, isoDay } from "@/lib/dates";
+import { readingMinutes, type Post } from "@/lib/posts";
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="card">
+  <span class="meta">
+    <time datetime={isoDay(post.data.pubDate)}>{formatDay(post.data.pubDate)}</time> · {readingMinutes(post)} min read
+    {post.data.draft && " · draft"}
+  </span>
+  <h3><a href={`/writing/${post.id}/`}>{post.data.title}</a></h3>
+  <p>{post.data.description}</p>
+</article>

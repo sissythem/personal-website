@@ -1,0 +1,56 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import avatar from "@/assets/avatar.jpg";
+import PostList from "@/components/PostList.astro";
+import { profile } from "@/data/profile";
+import Base from "@/layouts/Base.astro";
+import { formatDay, isoDay } from "@/lib/dates";
+import { getPosts, readingMinutes, type Post } from "@/lib/posts";
+
+export async function getStaticPaths() {
+  // Declared here because Astro runs getStaticPaths in isolation from the rest of the frontmatter.
+  const KEEP_READING_COUNT = 2;
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, others: posts.filter((other) => other.id !== post.id).slice(0, KEEP_READING_COUNT) },
+  }));
+}
+
+interface Props {
+  post: Post;
+  others: Post[];
+}
+
+const { post, others } = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, updatedDate } = post.data;
+---
+
+<Base title={title} description={description} section="writing">
+  <article class="article">
+    <nav class="crumb" aria-label="Breadcrumb">
+      <a href="/">Home</a> › <a href="/writing/">Writing</a> › <span aria-current="page">{title}</span>
+    </nav>
+    <h1>{title}</h1>
+    <p class="subtitle">{description}</p>
+    <div class="byline">
+      <Image src={avatar} alt="" width={80} height={80} />
+      <div>
+        {profile.name}
+        <span>
+          <time datetime={isoDay(pubDate)}>{formatDay(pubDate)}</time> · {readingMinutes(post)} min read
+          {updatedDate && <> · updated <time datetime={isoDay(updatedDate)}>{formatDay(updatedDate)}</time></>}
+        </span>
+      </div>
+    </div>
+    <div class="prose"><Content /></div>
+    {others.length > 0 && (
+      <aside class="keep">
+        <h2>Keep reading</h2>
+        <PostList posts={others} />
+      </aside>
+    )}
+  </article>
+</Base>

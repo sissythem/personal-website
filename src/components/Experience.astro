@@ -1,0 +1,38 @@
+---
+import { experience } from "@/data/experience";
+import { formatMonth } from "@/lib/dates";
+---
+
+<section class="section" id="experience">
+  <h2 class="section-title">Experience</h2>
+  <ol class="timeline">
+    {experience.map((job) => {
+      const shown = job.bullets.slice(0, job.visibleBullets);
+      const folded = job.bullets.slice(job.visibleBullets);
+      const foldLabel = shown.length > 0 ? `${folded.length} more` : "Show details";
+      return (
+        <li class:list={["job", { current: job.end === null }]}>
+          <p class="when meta">
+            <span>{formatMonth(job.start)} – {job.end ? formatMonth(job.end) : "Present"}</span><br />
+            <span>{job.location}</span>
+          </p>
+          <div class="body">
+            <h3>{job.title}</h3>
+            <p class="company">
+              {job.companyUrl ? <a href={job.companyUrl} rel="noopener">{job.company}</a> : job.company}
+              <span> · {job.summary}</span>
+            </p>
+            {shown.length > 0 && <ul class="bullets">{shown.map((bullet) => <li>{bullet}</li>)}</ul>}
+            {folded.length > 0 && (
+              <details>
+                <summary>{foldLabel}</summary>
+                <ul class="bullets">{folded.map((bullet) => <li>{bullet}</li>)}</ul>
+              </details>
+            )}
+            <ul class="chips" aria-label="Technologies">{job.stack.map((tech) => <li>{tech}</li>)}</ul>
+          </div>
+        </li>
+      );
+    })}
+  </ol>
+</section>

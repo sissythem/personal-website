@@ -1,0 +1,14 @@
+---
+import PostCard from "@/components/PostCard.astro";
+import type { Post } from "@/lib/posts";
+
+interface Props {
+  posts: readonly Post[];
+}
+
+const { posts } = Astro.props;
+---
+
+{posts.length === 0
+  ? <p class="empty">The first articles are on the way.</p>
+  : <ul class="cards">{posts.map((post) => <li><PostCard post={post} /></li>)}</ul>}

@@ -1,0 +1,24 @@
+---
+import About from "@/components/About.astro";
+import Experience from "@/components/Experience.astro";
+import PostList from "@/components/PostList.astro";
+import Publications from "@/components/Publications.astro";
+import Base from "@/layouts/Base.astro";
+import { getPosts } from "@/lib/posts";
+
+const LATEST_COUNT = 3;
+const posts = await getPosts();
+---
+
+<Base>
+  <div class="wrap">
+    <About />
+    <Experience />
+    <Publications />
+    <section class="section" id="writing">
+      <h2 class="section-title">Writing</h2>
+      <PostList posts={posts.slice(0, LATEST_COUNT)} />
+      {posts.length > LATEST_COUNT && <p class="section-foot"><a href="/writing/">All writing →</a></p>}
+    </section>
+  </div>
+</Base>

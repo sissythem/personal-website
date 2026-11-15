@@ -1,0 +1,36 @@
+---
+import { Image } from "astro:assets";
+import avatar from "@/assets/avatar.jpg";
+import { education, interests, profile } from "@/data/profile";
+---
+
+<section class="section about" id="about">
+  <div class="profile">
+    <Image src={avatar} alt={`Portrait of ${profile.name}`} width={296} height={296} loading="eager" />
+    <h1>{profile.name}</h1>
+    <span class="role">{profile.role}</span>
+    <a class="employer" href={profile.employerUrl} rel="noopener">{profile.employer}</a>
+    <ul class="socials">
+      {profile.socials.map((social) => <li><a href={social.url} rel="me noopener">{social.label}</a></li>)}
+      <li><a href="/rss.xml">RSS</a></li>
+    </ul>
+  </div>
+  <div class="bio">
+    <h2 class="section-title">About me</h2>
+    {profile.bio.map((paragraph) => <p>{paragraph}</p>)}
+    <div class="facts">
+      <div>
+        <h3>Interests</h3>
+        <ul>{interests.map((interest) => <li>{interest}</li>)}</ul>
+      </div>
+      <div>
+        <h3>Education</h3>
+        <ul>
+          {education.map((degree) => (
+            <li><div>{degree.title}, {degree.year}<span>{degree.institution}</span></div></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

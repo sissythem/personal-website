@@ -1,0 +1,27 @@
+---
+import { profile } from "@/data/profile";
+
+interface Props {
+  section: "home" | "writing";
+}
+
+const { section } = Astro.props;
+const links = [
+  { label: "About", href: "/#about" },
+  { label: "Experience", href: "/#experience" },
+  { label: "Publications", href: "/#publications" },
+];
+---
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/">{profile.name}</a>
+    <nav aria-label="Main">
+      <ul>
+        {links.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+        <li><a href="/writing/" aria-current={section === "writing" ? "page" : undefined}>Writing</a></li>
+        {profile.cvPdfPath && <li><a class="button" href={profile.cvPdfPath}>CV (PDF)</a></li>}
+      </ul>
+    </nav>
+  </div>
+</header>

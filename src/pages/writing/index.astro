@@ -1,0 +1,20 @@
+---
+import PostList from "@/components/PostList.astro";
+import Base from "@/layouts/Base.astro";
+import { getPosts } from "@/lib/posts";
+
+const posts = await getPosts();
+const description = "Articles on workflow orchestration, coding agents and software engineering practice.";
+---
+
+<Base title="Writing" description={description} section="writing">
+  <div class="wrap">
+    <header class="page-head">
+      <h1>Writing</h1>
+      <p>{description}</p>
+    </header>
+    <section class="section">
+      <PostList posts={posts} />
+    </section>
+  </div>
+</Base>
