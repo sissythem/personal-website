@@ -24,5 +24,5 @@ steps:
     on_low_confidence: human_review
 ```
 
-Inline `code`, [links](https://themeli.me) and lists all pick up the site's
+Inline `code`, [links](https://sissy.themeli.me) and lists all pick up the site's
 colours.
