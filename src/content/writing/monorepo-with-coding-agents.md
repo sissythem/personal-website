@@ -3,7 +3,7 @@ title: A monorepo that works with coding agents
 description: Our last monorepo needed 20 minutes of CI on every commit. I'm trying a monorepo again, this time built for working with coding agents.
 pubDate: 2026-11-15
 tags: [monorepo, ci-cd, ai-agents, python]
-draft: true
+draft: false
 ---
 
 A few years ago, at the company I was working for, we had one big monorepo. Every pull request waited 15 to 20 minutes for CI, a dependency bump could break services nobody had touched, and the repository grew to about a gigabyte. Then we moved to many small repositories, and CI became fast again.
