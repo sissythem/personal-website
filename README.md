@@ -5,14 +5,14 @@
 **Personal website and writing of Sissy Themeli, Staff Software Engineer.**
 
 [![Deploy](https://github.com/sissythem/personal-website/actions/workflows/deploy.yml/badge.svg)](https://github.com/sissythem/personal-website/actions/workflows/deploy.yml)
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fthemeli.me&label=themeli.me&up_message=online&down_message=offline)](https://themeli.me)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fsissy.themeli.me&label=sissy.themeli.me&up_message=online&down_message=offline)](https://sissy.themeli.me)
 [![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)](https://astro.build/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A522-5FA04E?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![GitHub Pages](https://img.shields.io/badge/hosted%20on-GitHub%20Pages-222222?logo=githubpages&logoColor=white)](https://pages.github.com/)
-[![RSS](https://img.shields.io/badge/RSS-feed-FFA500?logo=rss&logoColor=white)](https://themeli.me/rss.xml)
+[![RSS](https://img.shields.io/badge/RSS-feed-FFA500?logo=rss&logoColor=white)](https://sissy.themeli.me/rss.xml)
 
-[**Visit the site**](https://themeli.me) · [Writing](https://themeli.me/writing/) · [RSS](https://themeli.me/rss.xml)
+[**Visit the site**](https://sissy.themeli.me) · [Writing](https://sissy.themeli.me/writing/) · [RSS](https://sissy.themeli.me/rss.xml)
 
 </div>
 
@@ -101,7 +101,7 @@ For first-time setup (the custom domain, DNS and HTTPS) and troubleshooting, see
 
 ## 📬 Contact
 
-Find me through the links on [themeli.me](https://themeli.me).
+Find me through the links on [sissy.themeli.me](https://sissy.themeli.me).
 
 ---
 
