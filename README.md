@@ -1,6 +1,6 @@
 <div align="center">
 
-# themeli.me
+# Personal Website
 
 **Personal website and writing of Sissy Themeli, Staff Software Engineer.**
 
