@@ -25,6 +25,7 @@ A fast, static personal site with a CV and a writing section. It's built with [A
 - **About and experience**: profile, bio, roles, technologies, education and publications, all driven by typed data files
 - **Writing**: Markdown articles with tags, reading times, drafts and an RSS feed
 - **SEO-ready**: canonical URLs, Open Graph tags and meta descriptions on every page
+- **Link previews**: a 1200×627 preview card is generated for every article at build time (`/writing/<slug>/og.png`, plus `/og.png` for the rest of the site), so links render with an image on LinkedIn, Slack and X
 - **Type-checked**: `astro check` runs in CI before every deploy
 - **Self-hosted fonts**: Inter and JetBrains Mono via Fontsource, with no third-party font requests
 
@@ -90,6 +91,8 @@ draft: false
 
 Your article starts here.
 ```
+
+The link preview image is generated from the title and description, so there is nothing else to add. After publishing, paste the URL into the [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) to refresh LinkedIn's cached preview.
 
 Posts marked `draft: true` appear in `npm run dev` only, never in the published site or the RSS feed. See [`how-to-write-a-post.md`](src/content/writing/how-to-write-a-post.md) for an example of the layout.
 
