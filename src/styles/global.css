@@ -123,6 +123,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
 .prose pre { background: var(--surface) !important; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
 .prose pre code { font-family: var(--font-mono); }
 .prose img { border-radius: 10px; }
+.article .cover { display: block; width: 100%; height: auto; border-radius: 10px; margin-bottom: 28px; }
 .prose hr { border: 0; border-top: 1px solid var(--line); margin-block: 36px; }
 .keep { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
 .keep h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
