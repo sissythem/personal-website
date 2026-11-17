@@ -8,7 +8,7 @@ draft: false
 
 A few years ago, at the company I was working for, we had one big monorepo. Every pull request waited 15 to 20 minutes for CI, a dependency bump could break services nobody had touched, and the repository grew to about a gigabyte. Then we moved to many small repositories, and CI became fast again.
 
-> **✏️ TODO (Sissy):** one concrete moment would help here, e.g. the dependency bump that broke a service nobody had touched, or the day you decided to split the repository. Two or three sentences. Remove this note before merging.
+Releases were the worst part. Even with feature flags, people were scared to release from the monorepo on their own, so most releases ended up as a huddle with platform, software and ML engineers. That wasn't scalable. With many repositories we now release several times a day, but that's not something only many repositories can do. A monorepo can release just as often, ours was just set up in a way that made it impossible.
 
 So it's a bit strange that I'm building a monorepo again. Today most of my code is written together with coding agents, and they change the trade-off enough that I want to try it, this time without the mistakes of the old one.
 
