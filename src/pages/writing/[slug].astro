@@ -28,7 +28,7 @@ const { Content } = await render(post);
 const { title, description, pubDate, updatedDate } = post.data;
 ---
 
-<Base title={title} description={description} section="writing">
+<Base title={title} description={description} section="writing" image={`/writing/${post.id}/og.png`} publishedTime={pubDate}>
   <article class="article">
     <nav class="crumb" aria-label="Breadcrumb">
       <a href="/">Home</a> › <a href="/writing/">Writing</a> › <span aria-current="page">{title}</span>
