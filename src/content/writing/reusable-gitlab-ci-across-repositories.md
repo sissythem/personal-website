@@ -4,6 +4,8 @@ description: Shared CI templates included from main broke every repository at on
 pubDate: 2026-11-16
 tags: [gitlab, ci-cd, python]
 draft: false
+cover: ../../assets/covers/reusable-gitlab-ci-across-repositories.png
+coverAlt: "Before and after diagram: on the left, five repositories include CI templates from main and all their pipelines fail; on the right, they are pinned to versions v3.2.0 to v3.4.0 and all pass."
 ---
 
 Our CI templates started small, but over time more and more logic ended up inside the YAML files, as bash and Python, and the same logic was copied across several of them. Every time something changed in the internal tools we were using, even a version update of an internal package, someone had to remember to change the bash or Python in every YAML file that used it. Often someone forgot one, and we only found out when a pipeline failed.

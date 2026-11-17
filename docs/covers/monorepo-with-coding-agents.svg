@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" font-family="Inter">
+  <!-- Cover for "A monorepo that works with coding agents". Render with docs/covers/README.md. -->
+  <defs>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#4a4a55"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="627" fill="#121214"/>
+  <rect width="1200" height="8" fill="#a78bfa"/>
+
+  <!-- Left: title and legend -->
+  <text x="64" y="104" font-size="17" font-weight="600" letter-spacing="2" fill="#a78bfa">UV WORKSPACE</text>
+  <text x="64" y="160" font-size="46" font-weight="700" letter-spacing="-1" fill="#ececf1">What CI checks</text>
+  <text x="64" y="204" font-size="20" fill="#9a9aa6">A change checks its package and</text>
+  <text x="64" y="232" font-size="20" fill="#9a9aa6">every package that depends on it.</text>
+
+  <g font-size="18">
+    <rect x="64" y="300" width="34" height="24" rx="6" fill="#a78bfa"/>
+    <text x="114" y="318" fill="#ececf1">Changed</text>
+    <rect x="65" y="347" width="32" height="22" rx="6" fill="#2a2440" stroke="#a78bfa" stroke-width="2"/>
+    <text x="114" y="364" fill="#ececf1">Depends on it, checked</text>
+    <rect x="65" y="393" width="32" height="22" rx="6" fill="#1b1b1f" stroke="#3a3a44" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="114" y="410" fill="#9a9aa6">Not affected, skipped</text>
+  </g>
+
+  <!-- CI result -->
+  <rect x="64" y="500" width="440" height="56" rx="12" fill="#1b1b1f" stroke="#2b2b32"/>
+  <circle cx="96" cy="528" r="12" fill="#2dd4bf"/>
+  <path d="M90 528 l4.5 4.5 l8 -9" fill="none" stroke="#121214" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="120" y="534" font-size="18" fill="#ececf1"><tspan font-weight="600">CI success</tspan><tspan fill="#9a9aa6" xml:space="preserve">  ·  3 of 7 packages checked</tspan></text>
+
+  <!-- Right: dependency graph. Arrows point from a package to what it depends on. -->
+  <g stroke-width="2.5" fill="none">
+    <path d="M625 154 L683 254" stroke="#a78bfa" marker-end="url(#arrow-accent)"/>
+    <path d="M800 154 L727 254" stroke="#a78bfa" marker-end="url(#arrow-accent)"/>
+    <path d="M1010 154 L1010 254" stroke="#4a4a55" marker-end="url(#arrow-muted)"/>
+    <path d="M705 324 L705 424" stroke="#4a4a55" marker-end="url(#arrow-muted)"/>
+    <path d="M915 460 L795 460" stroke="#4a4a55" marker-end="url(#arrow-muted)"/>
+  </g>
+
+  <g font-size="21" font-weight="600" text-anchor="middle">
+    <!-- checked -->
+    <rect x="540" y="90" width="170" height="64" rx="12" fill="#2a2440" stroke="#a78bfa" stroke-width="2"/>
+    <text x="625" y="120" fill="#ececf1">agents</text>
+    <text x="625" y="142" font-size="14" font-weight="500" fill="#a78bfa">checked</text>
+    <rect x="725" y="90" width="170" height="64" rx="12" fill="#2a2440" stroke="#a78bfa" stroke-width="2"/>
+    <text x="810" y="120" fill="#ececf1">api</text>
+    <text x="810" y="142" font-size="14" font-weight="500" fill="#a78bfa">checked</text>
+
+    <!-- changed -->
+    <rect x="620" y="260" width="170" height="64" rx="12" fill="#a78bfa"/>
+    <text x="705" y="290" fill="#17121f" font-weight="700">core</text>
+    <text x="705" y="312" font-size="14" font-weight="600" fill="#17121f">changed</text>
+
+    <!-- skipped -->
+    <g stroke="#3a3a44" stroke-width="2" stroke-dasharray="5 4" fill="#1b1b1f">
+      <rect x="925" y="90" width="170" height="64" rx="12"/>
+      <rect x="925" y="260" width="170" height="64" rx="12"/>
+      <rect x="620" y="430" width="170" height="64" rx="12"/>
+      <rect x="920" y="430" width="170" height="64" rx="12"/>
+    </g>
+    <g fill="#9a9aa6">
+      <text x="1010" y="120">dashboard</text>
+      <text x="1010" y="290">ui-kit</text>
+      <text x="705" y="460">http-client</text>
+      <text x="1005" y="460">cli</text>
+    </g>
+    <g font-size="14" font-weight="500" fill="#6b6b76">
+      <text x="1010" y="142">skipped</text>
+      <text x="1010" y="312">skipped</text>
+      <text x="705" y="482">skipped</text>
+      <text x="1005" y="482">skipped</text>
+    </g>
+  </g>
+</svg>
