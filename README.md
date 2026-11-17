@@ -7,7 +7,7 @@
 [![Deploy](https://github.com/sissythem/personal-website/actions/workflows/deploy.yml/badge.svg)](https://github.com/sissythem/personal-website/actions/workflows/deploy.yml)
 [![Website](https://img.shields.io/website?url=https%3A%2F%2Fsissy.themeli.me&label=sissy.themeli.me&up_message=online&down_message=offline)](https://sissy.themeli.me)
 [![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)](https://astro.build/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A522-5FA04E?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![GitHub Pages](https://img.shields.io/badge/hosted%20on-GitHub%20Pages-222222?logo=githubpages&logoColor=white)](https://pages.github.com/)
 [![RSS](https://img.shields.io/badge/RSS-feed-FFA500?logo=rss&logoColor=white)](https://sissy.themeli.me/rss.xml)
@@ -26,7 +26,7 @@ A fast, static personal site with a CV and a writing section. It's built with [A
 - **Writing**: Markdown articles with tags, reading times, drafts and an RSS feed
 - **SEO-ready**: canonical URLs, Open Graph tags and meta descriptions on every page
 - **Link previews**: every article has its own 1200×627 preview image, so links render with an image on LinkedIn, Slack and X. It's the article's cover if it has one, otherwise a card generated at build time with an accent colour and pattern picked from the slug (`/writing/<slug>/og.png`, plus `/og.png` for the rest of the site)
-- **Type-checked**: `astro check` runs in CI before every deploy
+- **Type-checked**: `npm run check` type-checks every file, `.astro` components included, with TypeScript 7 and [`@astrojs/ts-content-mapper`](https://github.com/withastro/astro/tree/main/packages/language-tools/ts-content-mapper), on every pull request and before every deploy
 - **Self-hosted fonts**: Inter and JetBrains Mono via Fontsource, with no third-party font requests
 
 ## 🚀 Quick start
