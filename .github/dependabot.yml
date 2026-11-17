@@ -1,5 +1,8 @@
 # Weekly version updates. Security updates are enabled in the repository settings
 # and are opened as soon as an advisory is published, without the cooldown.
+#
+# Minor and patch updates are grouped into one pull request. Each major update gets its
+# own, so a breaking change can't hide in a group (TypeScript 7 broke the build that way).
 version: 2
 updates:
   - package-ecosystem: npm
@@ -12,6 +15,11 @@ updates:
     groups:
       npm:
         patterns: ["*"]
+        update-types: [minor, patch]
+    ignore:
+      # Node's type definitions follow the Node version in the deploy workflow, not the latest.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "chore(deps)"
 
@@ -24,5 +32,6 @@ updates:
     groups:
       github-actions:
         patterns: ["*"]
+        update-types: [minor, patch]
     commit-message:
       prefix: "ci(deps)"
