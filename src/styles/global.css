@@ -12,7 +12,7 @@
   --font-ui: "Inter Variable", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
   --page: 940px;
-  --reading: 680px;
+  --reading: 720px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -100,6 +100,20 @@ h1, h2, h3, h4 { text-wrap: balance; }
 .card .links a { font-size: 12px; padding: 3px 9px; border: 1px solid var(--accent); border-radius: 6px; }
 .card .links a:hover { background: var(--accent-soft); text-decoration: none; }
 
+/* Post cards: cover on top, the whole card is the link. */
+.post-card { position: relative; display: flex; flex-direction: column; height: 100%; min-width: 0; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; transition: border-color 0.15s, transform 0.15s; }
+.post-card:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+@media (prefers-reduced-motion: no-preference) { .post-card:hover { transform: translateY(-2px); } }
+.post-card img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 627; object-fit: cover; border-bottom: 1px solid var(--line); }
+.post-card-body { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px 20px; }
+.post-card h3 { font-size: 18px; font-weight: 600; line-height: 1.3; }
+.post-card h3 a { color: var(--fg); }
+.post-card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.post-card:hover h3 a { color: var(--accent); text-decoration: none; }
+.post-card h3 a:focus-visible { outline: none; }
+.post-card:has(a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+.post-card p { font-size: 14px; color: var(--muted); }
+
 /* Article */
 .article { max-width: var(--reading); margin: 0 auto; padding: 40px clamp(16px, 4vw, 24px) 64px; }
 .crumb { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
@@ -110,7 +124,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
 .byline { display: flex; align-items: center; gap: 12px; padding-block: 14px; margin-block: 24px 28px; border-block: 1px solid var(--line); font-size: 14px; }
 .byline img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
 .byline span { display: block; color: var(--muted); font-size: 13px; }
-.prose { font-size: 17px; line-height: 1.75; }
+.prose { font-size: 18px; line-height: 1.75; }
 .prose > * + * { margin-top: 20px; }
 .prose h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-top: 40px; line-height: 1.25; }
 .prose h3 { font-size: 19px; font-weight: 600; margin-top: 32px; }
@@ -125,6 +139,11 @@ h1, h2, h3, h4 { text-wrap: balance; }
 .prose img { border-radius: 10px; }
 .article .cover { display: block; width: 100%; height: auto; border-radius: 10px; margin-bottom: 28px; }
 .prose hr { border: 0; border-top: 1px solid var(--line); margin-block: 36px; }
+/* An opt-in card for one block: wrap it in <div class="callout"> with blank lines around the Markdown. */
+.prose .callout { background: color-mix(in srgb, var(--accent) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); border-radius: 16px; padding: 24px 28px; }
+.prose .callout > * + * { margin-top: 16px; }
+.prose .callout > h2 { margin-top: 0; color: var(--accent); }
+@media (max-width: 560px) { .prose .callout { padding: 20px; } }
 .keep { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
 .keep h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
 

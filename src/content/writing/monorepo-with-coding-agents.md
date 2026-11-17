@@ -100,9 +100,13 @@ The repository is new and has only two packages, so the change detection doesn't
 
 Since there is one lockfile, a dependency bump still checks every package. That's the right behaviour, but it will get slower as the repository grows. At that point I'd look at remote caching, or at tools like Nx, Bazel or Pants, which do change detection and caching properly at a much larger scale. For now, about a hundred lines of Python reading the uv workspace graph are enough.
 
+<div class="callout">
+
 ## So, monorepo or not?
 
 For years my answer was "many repositories", because of what the old monorepo felt like. Looking at it again, almost everything that made it slow was a setup choice: one environment for everything, boundaries that were only conventions and a CI that couldn't tell what a change affected. All of these can be fixed. What can't be fixed with many repositories is that a change across packages is split and tested in pieces, and agents make exactly that kind of change all the time. So for now I'm betting on the monorepo, and I'll write again when it's big enough to know if I was right.
+
+</div>
 
 ## References
 

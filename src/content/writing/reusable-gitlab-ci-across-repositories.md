@@ -109,9 +109,13 @@ A repository pinned to an old version also misses fixes, so the fleet drifts apa
 
 Not everything has moved yet. A few flows still use the old templates, and the next step is to move them and archive the old repository.
 
+<div class="callout">
+
 ## If you only do one thing
 
 Move the bash out of the YAML. Versions and typed inputs stopped one change from breaking every repository at once, but the CLI is what made the pipelines something we could test, run locally and change without being afraid of them. If you have more than a handful of repositories on GitLab, start there, and tag the result.
+
+</div>
 
 ## References
 

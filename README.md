@@ -96,6 +96,18 @@ Your article starts here.
 
 A cover is optional. With one, it's shown above the article and cropped to 1200×627 for the link preview, so keep the important part near the centre. Without one, a preview card is generated from the title and description, with its own accent colour and pattern. After publishing, paste the URL into the [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) to refresh LinkedIn's cached preview.
 
+To put one block in a highlighted card, such as a conclusion or a key takeaway, wrap it in a `callout` div. Leave blank lines inside the div so the Markdown is still parsed:
+
+```markdown
+<div class="callout">
+
+## If you only do one thing
+
+Your text here.
+
+</div>
+```
+
 Posts marked `draft: true` appear in `npm run dev` only, never in the published site or the RSS feed. See [`how-to-write-a-post.md`](src/content/writing/how-to-write-a-post.md) for an example of the layout.
 
 ## 🌍 Deployment
