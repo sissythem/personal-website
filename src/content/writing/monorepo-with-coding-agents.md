@@ -4,6 +4,8 @@ description: Our last monorepo needed 20 minutes of CI on every commit. I'm tryi
 pubDate: 2026-11-15
 tags: [monorepo, ci-cd, ai-agents, python]
 draft: false
+cover: ../../assets/covers/monorepo-with-coding-agents.png
+coverAlt: "Diagram of a uv workspace: a change to the core package checks core and the agents and api packages that depend on it, while the other packages are skipped."
 ---
 
 A few years ago, at the company I was working for, we had one big monorepo. Every pull request waited 15 to 20 minutes for CI, a dependency bump could break services nobody had touched, and the repository grew to about a gigabyte. Then we moved to many small repositories, and CI became fast again.

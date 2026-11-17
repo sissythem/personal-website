@@ -1,7 +1,6 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
-import { OG_HEIGHT, OG_WIDTH } from "@/lib/og-image";
 
 const writing = defineCollection({
   loader: glob({ base: "./src/content/writing", pattern: "**/*.md" }),
@@ -15,11 +14,9 @@ const writing = defineCollection({
         tags: z.array(z.string()).default([]),
         draft: z.boolean().default(false),
         /** Shown above the article and used as its link preview image. */
-        cover: image()
-          .refine((img) => img.width >= OG_WIDTH && img.height >= OG_HEIGHT, {
-            message: `The cover must be at least ${OG_WIDTH}×${OG_HEIGHT} pixels, so the link preview isn't blurry.`,
-          })
-          .optional(),
+        // The minimum size is checked in src/pages/writing/[slug].astro, because the image
+        // isn't loaded yet when this schema runs.
+        cover: image().optional(),
         coverAlt: z.string().optional(),
       })
       .refine((data) => !data.cover || data.coverAlt, {

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" font-family="Inter">
+  <!-- Cover for "Reusable GitLab CI across many repositories". Render with docs/covers/README.md. -->
+  <defs>
+    <g id="fail">
+      <circle r="12" fill="#fb7185"/>
+      <path d="M-4.5 -4.5 L4.5 4.5 M4.5 -4.5 L-4.5 4.5" stroke="#121214" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <g id="pass">
+      <circle r="12" fill="#2dd4bf"/>
+      <path d="M-6 0 l4.5 4.5 l8 -9" fill="none" stroke="#121214" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </defs>
+
+  <rect width="1200" height="627" fill="#121214"/>
+  <rect width="1200" height="8" fill="#a78bfa"/>
+  <line x1="600" y1="72" x2="600" y2="570" stroke="#2b2b32" stroke-width="2"/>
+
+  <!-- Before: every repository includes main -->
+  <text x="64" y="100" font-size="17" font-weight="600" letter-spacing="2" fill="#9a9aa6">BEFORE</text>
+  <text x="64" y="144" font-size="34" font-weight="700" letter-spacing="-0.6" fill="#ececf1">Everyone on main</text>
+
+  <rect x="167" y="186" width="290" height="58" rx="12" fill="#1b1b1f" stroke="#fb7185" stroke-width="2"/>
+  <text x="312" y="222" font-size="20" font-weight="600" text-anchor="middle" fill="#ececf1">ci-templates <tspan fill="#fb7185">@main</tspan></text>
+
+  <g stroke="#fb7185" stroke-width="2" stroke-opacity="0.55" fill="none">
+    <path d="M312 244 L106 372"/><path d="M312 244 L209 372"/><path d="M312 244 L312 372"/>
+    <path d="M312 244 L415 372"/><path d="M312 244 L518 372"/>
+  </g>
+
+  <g font-size="16" font-weight="600" text-anchor="middle" fill="#ececf1">
+    <g fill="#1b1b1f" stroke="#2b2b32" stroke-width="2">
+      <rect x="64" y="372" width="84" height="52" rx="10"/><rect x="167" y="372" width="84" height="52" rx="10"/>
+      <rect x="270" y="372" width="84" height="52" rx="10"/><rect x="373" y="372" width="84" height="52" rx="10"/>
+      <rect x="476" y="372" width="84" height="52" rx="10"/>
+    </g>
+    <text x="106" y="404">billing</text><text x="209" y="404">search</text><text x="312" y="404">auth</text>
+    <text x="415" y="404">notify</text><text x="518" y="404">ingest</text>
+  </g>
+  <use href="#fail" x="106" y="456"/><use href="#fail" x="209" y="456"/><use href="#fail" x="312" y="456"/>
+  <use href="#fail" x="415" y="456"/><use href="#fail" x="518" y="456"/>
+
+  <text x="64" y="528" font-size="19" fill="#9a9aa6">One change to a template reaches</text>
+  <text x="64" y="554" font-size="19" fill="#9a9aa6">every pipeline the next time it runs.</text>
+
+  <!-- After: repositories pinned to versions -->
+  <text x="640" y="100" font-size="17" font-weight="600" letter-spacing="2" fill="#a78bfa">AFTER</text>
+  <text x="640" y="144" font-size="34" font-weight="700" letter-spacing="-0.6" fill="#ececf1">Pinned to a version</text>
+
+  <g font-size="20" font-weight="600" text-anchor="middle">
+    <rect x="640" y="186" width="140" height="58" rx="12" fill="#1b1b1f" stroke="#3a3a44" stroke-width="2"/>
+    <text x="710" y="222" fill="#9a9aa6">v3.2.0</text>
+    <rect x="818" y="186" width="140" height="58" rx="12" fill="#1b1b1f" stroke="#3a3a44" stroke-width="2"/>
+    <text x="888" y="222" fill="#9a9aa6">v3.3.0</text>
+    <rect x="996" y="186" width="140" height="58" rx="12" fill="#a78bfa"/>
+    <text x="1066" y="222" fill="#17121f" font-weight="700">v3.4.0</text>
+  </g>
+
+  <g stroke-width="2" fill="none">
+    <path d="M710 244 L682 372" stroke="#4a4a55"/>
+    <path d="M888 244 L785 372" stroke="#4a4a55"/>
+    <path d="M888 244 L888 372" stroke="#4a4a55"/>
+    <path d="M1066 244 L991 372" stroke="#a78bfa"/>
+    <path d="M1066 244 L1094 372" stroke="#a78bfa"/>
+  </g>
+
+  <g font-size="16" font-weight="600" text-anchor="middle" fill="#ececf1">
+    <g fill="#1b1b1f" stroke="#2b2b32" stroke-width="2">
+      <rect x="640" y="372" width="84" height="52" rx="10"/><rect x="743" y="372" width="84" height="52" rx="10"/>
+      <rect x="846" y="372" width="84" height="52" rx="10"/><rect x="949" y="372" width="84" height="52" rx="10"/>
+      <rect x="1052" y="372" width="84" height="52" rx="10"/>
+    </g>
+    <text x="682" y="404">billing</text><text x="785" y="404">search</text><text x="888" y="404">auth</text>
+    <text x="991" y="404">notify</text><text x="1094" y="404">ingest</text>
+  </g>
+  <use href="#pass" x="682" y="456"/><use href="#pass" x="785" y="456"/><use href="#pass" x="888" y="456"/>
+  <use href="#pass" x="991" y="456"/><use href="#pass" x="1094" y="456"/>
+
+  <text x="640" y="528" font-size="19" fill="#9a9aa6">Each repository moves to a new</text>
+  <text x="640" y="554" font-size="19" fill="#9a9aa6">version through its own pipeline.</text>
+</svg>
