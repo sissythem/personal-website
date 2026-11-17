@@ -21,9 +21,9 @@
     "astro": "^7.4.12",
     "satori": "^0.63.2",
     "sharp": "^0.35.5",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "devDependencies": {
-    "@types/node": "^22.20.5"
+    "@types/node": "^26.6.6"
   }
 }
