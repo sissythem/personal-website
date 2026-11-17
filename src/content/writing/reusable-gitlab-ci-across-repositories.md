@@ -6,9 +6,7 @@ tags: [gitlab, ci-cd, python]
 draft: false
 ---
 
-One commit in our CI templates repository says "drop debug echo that broke generated child pipeline YAML". Someone had added an `echo` to debug a job, and because every repository included the templates from `main`, that one line broke the child pipelines of every repository that used them, until the fix was pushed.
-
-> **✏️ TODO (Sissy):** add what actually happened, if you remember it, e.g. how many repositories were hit, who noticed and how long it took. One or two sentences are enough. Remove this note before merging.
+Our CI templates started small, but over time more and more logic ended up inside the YAML files, as bash and Python, and the same logic was copied across several of them. Every time something changed in the internal tools we were using, even a version update of an internal package, someone had to remember to change the bash or Python in every YAML file that used it. Often someone forgot one, and we only found out when a pipeline failed.
 
 In my [previous post](/writing/monorepo-with-coding-agents) I wrote that at work we moved from one big monorepo to many small repositories on GitLab. CI became fast again, but every repository still needs a pipeline, and most of them need the same one: lint, tests, a changelog check, an image build, a deploy and a check that the deploy is live. Nobody wants to copy that into a hundred `.gitlab-ci.yml` files, so we shared them through a repository of YAML templates.
 
@@ -27,9 +25,9 @@ include:
 
 Some repositories included one entry file, which included the rest. Others picked five or six of the smaller files themselves, e.g. lint, unit tests, coverage and the version check for Go. This is the standard way of sharing CI in GitLab and it's fine for a few repositories. With more, a few problems showed up.
 
-The first one was versioning, or rather the lack of it. The templates repository had no tags at all, so every repository included `main`. A change to a template reached every pipeline in the company the next time it ran, with no way to test it first and no way for a single repository to stay on the old behaviour. The debug `echo` above wasn't the only one, the history also has a few plain reverts.
+The first one was versioning, or rather the lack of it. The templates repository had no tags at all, so every repository included `main`. A change to a template reached every pipeline in the company the next time it ran, with no way to test it first and no way for a single repository to stay on the old behaviour. The history has the expected commits, e.g. "drop debug echo that broke generated child pipeline YAML" and a few plain reverts.
 
-The second one was the bash, and this is the part I disliked the most. The jobs did real work: they compared versions, created tags, built changelogs, pushed commits with a retry loop, checked that images existed in the registry, posted comments on merge requests and waited for Argo CD. All of it was written inline in the YAML, as bash with `awk`, `sed`, `jq` and some Python heredocs, about 80 KB in total. The same logic was written again, a bit differently, for Python and for Go. None of it was tested, and the only way to run it was to push a commit and wait for the pipeline.
+The second one was the bash, and this is the part I disliked the most. The jobs did real work: they compared versions, created tags, built changelogs, pushed commits with a retry loop, checked that images existed in the registry, posted comments on merge requests and waited for Argo CD. All of it was written inline in the YAML, as bash with `awk`, `sed`, `jq` and some Python heredocs, about 80 KB in total. The same logic was written again, a bit differently, for Python and for Go, which is why a change in one of our internal tools meant hunting for every copy. None of it was tested, and the only way to run it was to push a commit and wait for the pipeline.
 
 The third one was the interface. A template was configured with global CI variables, e.g. `PYTHON_VERSION` or `CHANGELOG_ENABLED`. Nothing listed which variables a template read, a typo was silently ignored and the job ran with the default, and two included files could read the same variable for different things.
 
