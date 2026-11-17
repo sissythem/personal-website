@@ -20,6 +20,9 @@ updates:
       # Node's type definitions follow the Node version in the deploy workflow, not the latest.
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # @astrojs/check only supports TypeScript 5 and 6. Remove this once it supports 7.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "chore(deps)"
 
