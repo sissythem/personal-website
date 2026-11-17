@@ -1,5 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import { formatDay, isoDay } from "@/lib/dates";
+import { OG_HEIGHT, OG_WIDTH } from "@/lib/og-image";
 import { readingMinutes, type Post } from "@/lib/posts";
 
 interface Props {
@@ -7,13 +9,21 @@ interface Props {
 }
 
 const { post } = Astro.props;
+const { cover } = post.data;
+const href = `/writing/${post.id}/`;
+// The image repeats the title, so it is decorative (empty alt). Posts without a cover use their generated preview card.
 ---
 
-<article class="card">
-  <span class="meta">
-    <time datetime={isoDay(post.data.pubDate)}>{formatDay(post.data.pubDate)}</time> · {readingMinutes(post)} min read
-    {post.data.draft && " · draft"}
-  </span>
-  <h3><a href={`/writing/${post.id}/`}>{post.data.title}</a></h3>
-  <p>{post.data.description}</p>
+<article class="post-card">
+  {cover
+    ? <Image src={cover} alt="" width={640} height={Math.round((640 * OG_HEIGHT) / OG_WIDTH)} fit="cover" />
+    : <img src={`${href}og.png`} alt="" width={OG_WIDTH} height={OG_HEIGHT} loading="lazy" decoding="async" />}
+  <div class="post-card-body">
+    <span class="meta">
+      <time datetime={isoDay(post.data.pubDate)}>{formatDay(post.data.pubDate)}</time> · {readingMinutes(post)} min read
+      {post.data.draft && " · draft"}
+    </span>
+    <h3><a href={href}>{post.data.title}</a></h3>
+    <p>{post.data.description}</p>
+  </div>
 </article>
