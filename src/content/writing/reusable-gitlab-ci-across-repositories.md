@@ -29,7 +29,7 @@ Some repositories included a single entry file, which in turn included the rest.
 
 The first was versioning, or rather its absence. The templates repository had no tags at all, so `main` was included everywhere. A change to a template reached every pipeline in the company the next time it ran. It could not be tested beforehand, and no repository could stay on the old behaviour. The history contains the commits one would expect, such as "drop debug echo that broke generated child pipeline YAML" and a few plain reverts.
 
-The second was the bash, and this is the part I disliked most. The jobs did real work: they compared versions, created tags, built changelogs, pushed commits with a retry loop, checked that images existed in the registry, posted comments on merge requests and waited for Argo CD. All of it was written inline in the YAML, as bash with `awk`, `sed`, `jq` and some Python heredocs, about 80 KB in total. The same logic had been written a second time, slightly differently, for Python and for Go, which is why a change to one of our internal tools meant hunting down every copy. None of it was tested, and the only way to run it was to push a commit and wait for the pipeline.
+The second was the bash, and this is the part I disliked most. The jobs did real work: they compared versions, created tags, built changelogs, pushed commits with a retry loop, checked that images existed in the registry, posted comments on merge requests and waited for Argo CD. All of it was written inline in the YAML, as bash with `awk`, `sed`, `jq` and some Python heredocs. The same logic had been written a second time, slightly differently, for Python and for Go, which is why a change to one of our internal tools meant hunting down every copy. None of it was tested, and the only way to run it was to push a commit and wait for the pipeline.
 
 The third was the interface. A template was configured through global CI variables such as `PYTHON_VERSION` or `CHANGELOG_ENABLED`. Nothing listed which variables a template read, a typo was silently ignored so that the job ran with the default, and two included files could read the same variable for different purposes.
 
@@ -55,9 +55,9 @@ In hindsight, neither inputs nor tags are specific to the catalog. `spec:inputs`
 
 ### Pin every repository to a version
 
-Every repository includes a component at an exact tag, never `@main`. The tag carries the leading `v`, since components are published to the catalog under the git tag name. Component references are recognised by Renovate, which opens a merge request in each repository when a new version is released. A repository therefore moves to a new version through its own pipeline, and can stay behind if the new version breaks it.
+Every repository includes a component at an exact tag, never `@main`. The tag carries the leading `v`, since components are published to the catalog under the git tag name. Renovate recognises component references and opens a merge request in each repository when a new version is released, but only patch and minor versions are updated automatically. Once the pipeline of such a merge request passes, a bot approves it and it is merged, so fixes reach every repository without anyone having to act. Major versions are left out of this on purpose. A repository moves to a new major deliberately, through its own merge request, and can stay behind until it is ready.
 
-The components follow semantic versioning. A breaking change, such as removing a component or renaming an input, is a major release. When an input is renamed, the old name keeps working for one minor release, so that a Renovate bump doesn't break a repository whose configuration hasn't been updated yet.
+This only works if the components follow semantic versioning strictly, because a minor release is merged everywhere without anyone reading it. A breaking change, such as removing a component or renaming an input, is therefore always a major release. When an input is renamed in a minor release, the old name keeps working as an alias until the next major release, so that the automatic bump doesn't break a repository whose configuration hasn't been updated yet.
 
 ### Logic in a CLI, not in YAML
 
@@ -103,9 +103,9 @@ The old templates repository was left as it was and marked as deprecated, while 
 
 ## Trade-offs and next steps
 
-Versions carry a cost of their own. The components project has had about 150 releases so far, and each one opens a Renovate merge request in every repository that uses it. To be honest, most of them are merged without being read, which makes a major release easy to miss. That is partly my fault for releasing so often, and grouping the bumps would help.
+Automatic merges are only as safe as the pipeline that approves them. A minor release that changes behaviour without failing any job, such as a new default for an input, reaches every repository without anyone noticing. Deciding what counts as a breaking change therefore matters more than it would if a person read every bump.
 
-A repository pinned to an old version also misses fixes, so the fleet drifts apart over time, just as it did with shared libraries. The difference is that this drift is visible, since the version is written in each `.gitlab-ci.yml`, whereas before every repository was on `main` and nobody knew which behaviour it was getting.
+Major versions have the opposite problem. A repository that is never moved to the new major stays on the old one and misses every fix released after it, so the fleet can drift apart over time, just as it did with shared libraries. The difference is that this drift is visible, since the version is written in each `.gitlab-ci.yml`, whereas before every repository was on `main` and nobody knew which behaviour it was getting.
 
 Not everything has been moved yet. A few flows still use the old templates, and the next step is to migrate them and archive the old repository.
 

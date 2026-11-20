@@ -22,7 +22,7 @@ All the code shared a single environment, in which every dependency of every pro
 
 The libraries were meant to be independent, but in practice they were not. Shared code that lived outside any library was imported by several of them, so they could not be installed or tested on their own, and a library that should have been lightweight could end up pulling in heavy dependencies.
 
-CI checked only whether any Python file had changed. If one had, the entire test suite and the type check were run for the whole repository, which took 15 to 20 minutes. The dependency cache was tied to the whole lockfile, so a dependency update in any part of the repository restarted every job from scratch.
+CI checked only whether any Python file had changed. If one had, the entire test suite and the type check were run for the whole repository. The dependency cache was tied to the whole lockfile, so a dependency update in any part of the repository restarted every job from scratch.
 
 Dependencies were also declared in more than one place, such as the main lockfile and a separate set of requirements for each service's Docker image. These drifted apart over time, and time that should have gone into the product was spent repairing the lockfile instead.
 
@@ -38,7 +38,7 @@ The first is what the agent can see. In a separate repository, an agent changing
 
 The second is what a single CI run can test, which Ranjan Kumar calls the [proof perimeter](https://ranjankumar.in/monorepo-vs-polyrepo-ai-coding-agents-proof-perimeter). In a monorepo, the change to the library and the changes to its callers travel in one pull request and are tested together before merging. With multiple repositories, the same change is split across several pull requests that are merged in order, each tested against older versions of the others. Agents make far more of these cross-cutting changes than people do, because the effort involved doesn't deter them, so the perimeter matters more than it used to.
 
-There are arguments against the monorepo as well. A [study on `AGENTS.md` files](https://arxiv.org/abs/2602.11988) with 138 tasks found that context files in the repository often lowered the agents' success rate and increased the inference cost by more than 20%, which suggests that a large repository with long instructions can make an agent worse. [Faros AI](https://www.faros.ai/blog/monorepo-vs-polyrepo-benchmark-data) measured a median pull request cycle time of 19 hours for teams in monorepos and 2 hours for teams with multiple repositories. They attribute the gap to immature CI and review routing rather than to the monorepo itself, which matches our experience, but the risk remains. Lastly, a single commit, or a single agent with write access, can touch everything.
+There are arguments against the monorepo as well. A [study on `AGENTS.md` files](https://arxiv.org/abs/2602.11988) found that context files in the repository often lowered the agents' success rate and increased the inference cost by more than 20%, which suggests that a large repository with long instructions can make an agent worse. [Faros AI](https://www.faros.ai/blog/monorepo-vs-polyrepo-benchmark-data) measured a median pull request cycle time of 19 hours for teams in monorepos and 2 hours for teams with multiple repositories. They attribute the gap to immature CI and review routing rather than to the monorepo itself, which matches our experience, but the risk remains. Lastly, a single commit, or a single agent with write access, can touch everything.
 
 My new monorepo is a side project for building AI agents, made up of a few Python packages and tools. What I'm doing differently falls into three groups: keeping the packages apart, keeping CI fast, and keeping the agents in line.
 
@@ -70,13 +70,13 @@ From this, a matrix is generated with one quality job per package (lint, types a
 
 GitHub's `paths` filters and GitLab's `rules:changes` would be simpler, but they see only the changed files and not the packages that depend on them, so the benefit of testing the whole change together would be lost.
 
-At the moment a full CI run takes 25 to 90 seconds, and the quality job of a single package 12 to 29 seconds. With only two packages that proves very little, so ask me again when there are twenty.
+At the moment a full CI run takes well under two minutes, but with only two packages that proves very little, so ask me again when there are twenty.
 
 ## Keeping the agents in line
 
 ### Short instructions per package
 
-Claude Code, Codex, Cursor and Copilot all read instruction files arranged in a hierarchy. Claude Code loads the `CLAUDE.md` files from the working directory and its parents at start-up, and a subdirectory's file only once it reads or edits a file there. Codex combines the `AGENTS.md` files from the root down to the working directory, with deeper files taking precedence, up to 32 KiB by default. Under the [agents.md](https://agents.md/) convention, the file closest to the edited code wins.
+Claude Code, Codex, Cursor and Copilot all read instruction files arranged in a hierarchy. Claude Code loads the `CLAUDE.md` files from the working directory and its parents at start-up, and a subdirectory's file only once it reads or edits a file there. Codex combines the `AGENTS.md` files from the root down to the working directory, with deeper files taking precedence. Under the [agents.md](https://agents.md/) convention, the file closest to the edited code wins.
 
 This suits a monorepo, provided the files stay short. The root file should hold pointers and the rules that apply to the whole repository, while each package's file holds its own conventions and the exact commands for linting, type checking and running a single test. Anything longer, or needed only occasionally, is better written as a skill, which is loaded only when required. Given the study above, I prefer to keep these files small. The repository doesn't have them yet, so they are the next step, to be added one package at a time.
 
