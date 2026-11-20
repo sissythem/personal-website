@@ -8,9 +8,9 @@ cover: ../../assets/covers/monorepo-with-coding-agents.png
 coverAlt: "Diagram of a uv workspace: a change to the core package checks core and the agents and api packages that depend on it, while the other packages are skipped."
 ---
 
-A few years ago, the company I was working for kept everything in one large monorepo. Every pull request waited 15 to 20 minutes for CI, a dependency bump could break services nobody had touched, and the repository had grown to about a gigabyte. The code was eventually split into many small repositories, and CI became fast again.
+A few years ago, the company I was working for kept everything in one large monorepo. Every pull request waited 15 to 20 minutes for CI, a dependency bump could break services nobody had touched, and the repository had grown to about a gigabyte. Rather than pay down the monorepo's technical debt, the company decided to move to many small repositories, to make CI fast again and daily releases possible.
 
-Releases suffered the most. Even with feature flags, few people were confident enough to release from the monorepo on their own, so most releases turned into a huddle of platform, software and ML engineers, which was never going to scale. With many repositories, releases now go out several times a day, although that isn't something only many repositories can offer. A monorepo can be released just as often, and ours had simply been set up in a way that made it impossible.
+Of the two, releases had been the bigger problem. Even with feature flags, few people were confident enough to release from the monorepo on their own, so most releases turned into a huddle of platform, software and ML engineers, which was never going to scale. With many repositories, releases now go out several times a day, although that isn't something only many repositories can offer. A monorepo can be released just as often, and ours had simply been set up in a way that made it impossible.
 
 It may seem odd, then, that I'm building a monorepo again. Most of my code is now written together with coding agents, and they shift the trade-off far enough that I want to try once more, this time without repeating the mistakes of the old one.
 
