@@ -58,7 +58,9 @@ The other trade-off is cost, since every merge request other than a dependency u
 
 ## What I took away
 
-When I started, I thought the problem was finding a better AI reviewer. In hindsight, the reviewer is the easy part. The hard question is deciding which changes nobody needs to read, and who is accountable when one of them breaks, which is as much a question about the team as about the model. I expect the line between simple and complex to keep moving as the reviewer earns trust, which is exactly why the rule drawing it should stay small enough for anyone to read.
+The part I expect to make the biggest difference is not the tiers but what the reviewer knows. A reviewer that sees only the diff can point out an unused variable, yet it cannot tell that a change breaks a service in another repository, or that the codebase already has a helper doing exactly the same thing. Ours starts from the rules we already keep in our internal plugin for coding agents, so it judges a change by the same standards our agents are asked to write it by, and from a short description of every repository the change depends on, so it can check the change against the architecture around it.
+
+Splitting the review into subagents came from the same lesson. A long set of instructions gets skimmed by a model just as it does by a person, and rules end up being missed, which is why the reviewer has its own, much shorter set of rules rather than our whole plugin. Given one concern, its own short set of rules and only the context it needs, each subagent has far less room to drift, so the review should read more like comments from someone who knows the system than a generic checklist.
 
 </div>
 
