@@ -28,7 +28,7 @@ The first version of the proposal ran the review as a job in each repository's C
 
 Around the same time, a product manager suggested going further than I had planned, and letting the AI approve and merge small, low-risk changes on its own instead of only commenting on them. I liked that approach better than mine, so the proposal was updated, and most of the design follows from the question it raises: how do you decide which changes nobody needs to read?
 
-## What made it work
+## How it works
 
 Dependency updates are skipped entirely, since another bot already approves them. Every other merge request is first triaged by a small classification model.
 
