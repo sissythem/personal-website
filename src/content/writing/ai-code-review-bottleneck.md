@@ -1,117 +1,76 @@
 ---
 title: Code review is the new bottleneck
-description: Coding agents made writing code cheap, so the time moved to reviewing it. This is the tiered AI review I designed to give human attention to the changes that need it.
+description: Coding agents made writing code cheap, so the time moved to reviewing it. This is the tiered AI review I designed so that people only read the merge requests that need them.
 pubDate: 2026-11-22
 tags: [code-review, ai-agents, ci-cd]
 draft: true
 ---
 
-Most of my code is now written by coding agents, as is a growing share of my team's. Writing a change has become cheap, yet reading it has not, so the time saved on one side of the merge request has reappeared on the other. Merge requests wait for a reviewer, while the person who opened them moves on to the next one.
+Since most of my code is now written with coding agents, opening a merge request takes a fraction of the time it used to. Reviewing one, however, takes exactly as long as before, so the time saved while writing the code is now spent waiting for someone to read it. As a result, the slowest part of shipping a change is no longer writing it but getting it reviewed.
 
-We are not alone in this. Anthropic reports that the changes landing in its monorepo went from about 2,500 a day in May 2026 to more than 30,000 in September, and its playbook for agent-driven development opens with the observation that "code is no longer the bottleneck". The bottleneck has moved to the steps that still run at human speed, and review is the largest of them.
+This is not a problem specific to my team. Anthropic [reports](https://claude.dev/blog/solving-code-review-at-anthropic/) that the changes landing in its monorepo grew from about 2,500 a day in May 2026 to more than 30,000 in September, and its [playbook for agent-driven development](https://claude.com/resources/articles/the-ai-native-sdlc-playbook) starts from the observation that "code is no longer the bottleneck". Whatever still runs at human speed becomes the new bottleneck, and code review is the biggest part of it.
 
-Since October I have been designing a tiered AI review for our merge requests. The proposal was accepted in October and is being built now, so what follows is a design rather than a result. Nothing below has run in shadow mode yet, and I will write again once it has.
+Over the last two months I have been working on a tiered AI review for our merge requests, where an AI reviews every change, and people review only the ones that need them. The proposal was accepted in October and is being built now. None of it has run in production yet, so this post describes a design rather than results, and I'll write again once it has been running for a while.
 
-## Why review became the bottleneck
+## How review became the bottleneck
 
-Review used to have two jobs. The first is catching problems before they ship. The second is spreading knowledge: by reading each other's changes, a team learns how the system fits together. Both still matter, yet the economics behind them have changed. When a person wrote a change in a day, half an hour of reading it was a fair price. When an agent writes it in ten minutes, the same half hour is most of the cost, and every engineer can now open several changes a day.
+Code review always had two jobs: catching problems before they reach production, and spreading knowledge, since reading each other's changes is how a team learns the parts of the system it didn't write. Both still matter, yet the cost behind them has changed. When a change took a day to write, half an hour of reading it was a reasonable price. When it takes an agent ten minutes, that same half hour becomes most of its cost, while every engineer now opens several merge requests a day.
 
-We already had an AI reviewer, a hosted service commenting on every merge request, and it showed the limits of the obvious answer. It was rate limited, so on one of our busiest repositories almost a quarter of merge requests hit the limit and roughly one in six received no review at all. About a third of its reviews were automated dependency updates, on which it had posted no findings across more than a hundred merged changes. It saw only the diff, so it could not check a workflow against the platform it runs on, or a service against its deployment files. It also knew nothing about our standards, and I had never seen it suggest an improvement to the design of the code.
+We already had an AI reviewer commenting on every merge request, and in hindsight it showed why adding one is not enough. It was rate limited, so on one of our busiest repositories almost a quarter of merge requests hit the limit and roughly one in six received no review at all. About a third of its reviews were dependency updates, on which it had not posted a single finding across more than a hundred merged changes. Since it only saw the diff, it couldn't check a workflow against the platform running it, or a service against its deployment files, and as it knew nothing about our standards, I never saw it suggest a better design for any piece of code.
 
-Meanwhile, people were still spending time on merge requests that did not need it, and on some of them the AI reviewer was already the only approval. That happened without any rule about which changes qualified and without an audit trail. Since our compliance obligations expect every change to be reviewed, silent gaps were a problem in their own right.
+At the same time, people were still reading merge requests that didn't need them, while on others the AI was already the only approval, without any rule about which changes qualified and without any record of why. For a company whose compliance commitments expect every change to be reviewed, that was a problem in itself.
 
-So the goal was set as follows: people stop reviewing simple merge requests, while complex ones get a review at least as good as the one we had. Spending should follow risk, with a fast model for simple changes and an advanced one for complex changes.
+The goal was therefore to stop people from reviewing simple merge requests, while making sure that complex ones got a review at least as good as the one we had, and to spend in proportion to the risk: a fast model for simple changes and an advanced one for complex changes.
 
-## The design in one picture
+## The first version, and why it changed
 
-Every merge request goes through the same steps. Automated dependency updates are skipped entirely, since another bot already approves them. Everything else is triaged, given a tier, reviewed by the model matching that tier, and either approved or answered with findings:
+The first version of the proposal ran the review as a job in each repository's CI pipeline, which seemed the obvious place for it. Colleagues pointed out three problems with that in the review of the proposal, and they were right. A CI job runs on every push, rebases included, which spends tokens on the same diff again and again. It cannot react to anything that happens without a push, such as a thread being resolved or a draft being marked ready. Finally, merge request pipelines run the configuration of the merge request's own branch, so they cannot be trusted with protected keys. The reviewer was therefore moved into a small GitLab app, which reviews a merge request when it is opened or marked ready, and again only when its diff changes or someone mentions it.
 
-- **Simple:** a fast model reviews the diff and the repository. If it finds nothing blocking, the merge request is approved and set to merge automatically once its pipeline passes.
-- **Complex:** an advanced model reviews the diff, the repository and the repositories it depends on, followed by a verification pass with a cheaper model to drop false positives. If nothing blocking is found, the merge request is approved, yet never merged automatically. The author decides when to merge and whether to ask a colleague.
-- **Findings in either tier:** they are posted as threads on the merge request, and nothing is approved.
+Around the same time, a product manager suggested going further than I had planned, and letting the AI approve and merge small, low-risk changes on its own instead of only commenting on them. I liked that approach better than mine, so the proposal was updated, and most of the design follows from the question it raises: how do you decide which changes nobody needs to read?
 
-The interesting parts are the decisions behind those steps.
+## What made it work
 
-## What made it work, on paper
+Dependency updates are skipped entirely, since another bot already approves them. Every other merge request is first triaged by a small classification model.
 
-### Triage is classification, not generation
+We already had a tool that triaged merge requests with a single free-text call to a language model, yet triage is a classification problem, so the new model reads a compact description of the change and answers four typed questions: how much review effort it needs, how risky it is, whether it is a candidate for the safe lane, and whether its current state is clean or challenged. Instead of a label, it returns a probability for every possible answer, which is the most useful part, since an uncertain answer can simply send the merge request down the cautious path.
 
-We already had a tool that triaged merge requests with a single free-text call to a language model. Triage, however, is a classification problem, so it was moved to a small classification model, which reads a compact description of the change and a set of typed questions, and returns a probability for every possible answer instead of generating text. Four questions are asked for each merge request: how much review effort it needs (light, normal or deep), how risky it is (low, medium or high), whether it is a candidate for the safe lane, and whether its current state is clean or challenged.
+The model, however, does not decide anything. The tier is decided by a few lines of code, which anyone can read, and a merge request counts as simple only if it needs light effort, carries low risk and is a safe-lane candidate, each with a probability of at least 0.8, if it touches no workflows, external writes, authentication or secrets, migrations, dependency manifests or paths the repository marks as sensitive, and if it changes fewer than 200 lines, lockfiles excluded.
 
-The probabilities are the point. Rather than trusting a single label, a merge request whose answers are uncertain is sent to the complex tier. It also gives us a number for "how confident are we in this risk level?" on every merge request, which can be checked against labels set by people.
+Changes to CI configuration and Dockerfiles can still be simple, since the pipeline tests them itself: a broken pipeline fails, and a broken Dockerfile is caught by the image build or the integration tests. Anything else is complex, and so is any merge request whose triage is missing, degraded or too large, so a failure never leads to the cheaper path. A person can force a merge request into the complex tier with a label, yet deliberately there is no label forcing the simple one.
 
-### The tier is decided in code
+Simple merge requests are reviewed by a fast model, which sees the diff and the repository. If it finds nothing blocking, the merge request is approved and merged automatically once its pipeline passes. Complex merge requests are reviewed by an advanced model with context from the repositories they depend on, followed by a cheaper model whose only job is to drop false positives. If nothing blocking is found, the merge request is approved, yet never merged automatically, leaving its author to decide when to merge and whether to ask a colleague as well.
 
-The model's answers are inputs, not a decision. A merge request is simple only if all of the following hold, and complex otherwise:
+In both tiers the reviewer is a coding agent, such as Claude Code or Codex, rather than a single call to a model, because a model shown only a diff can only comment on the diff. An agent can read the rest of the repository, look for the callers of a function and check the history before raising anything, and it already knows our standards from the plugins the team uses every day.
 
-- light effort, low risk and a "yes" for the safe lane, each with a probability of at least 0.8 by default, to be tuned from a benchmark
-- no changes to workflows, external writes, CI configuration, Dockerfiles, authentication or secrets, migrations, dependency manifests or any path a repository declares as sensitive
-- fewer than 200 changed lines by default, lockfiles excluded
+Each review runs as a short-lived job in Kubernetes, with read-only tools and a cost limit, and is split into subagents, one per concern: intent, correctness, tests, standards, design, behaviour under retries when workflows change, and, on complex merge requests, architecture and coherence. Apart from the intent check, whose job is to compare what the diff does with what the description claims, none of them is shown the description or the ticket, so they judge the code and not the author's account of it.
 
-A missing, degraded or oversized triage result is always treated as complex, so a failure never leads to the cheaper path. Draft merge requests are not reviewed until they are marked ready, since nothing should approve unfinished work. A person can force the complex tier or skip AI review with a label, yet there is deliberately no label forcing the simple tier.
+The rubrics come from reviewing a lot of code written by agents. Tests have to be in proportion to the behaviour changed, and a test that cannot fail, or that only asserts on a mock, is a finding, while for every test the reviewer has to name a one-line bug it would not catch. Documentation contradicting the code is a finding, and so is history written into comments, such as "used to" or a ticket number.
 
-### The model proposes, code approves
+The check I care about most, however, is coherence. Many changes can each look fine on their own, yet together leave three ways of doing the same thing, so that every later change needs more context and work slows down. The coherence check therefore flags a merge request that adds a second way of doing something the codebase already does, starts a migration without finishing the last one, or works around complexity it could have removed. Annoyingly, small changes do this as often as large ones, so simple merge requests get a lighter version of it too.
 
-The reviewer only proposes findings. A separate, deterministic step validates them, decides whether to approve and performs every write to GitLab, which means the model never holds a write token and never decides an approval. That step also writes a summary note recording the tier, the triage probabilities, the reviewer model, the reviewed commit and the outcome, which doubles as the audit trail we were missing.
+Since the AI can now approve and merge, the model is never trusted with the decision itself. It only proposes findings, while a deterministic step validates them, decides whether to approve and performs every write to GitLab, so the model never holds a write token. That step also writes a note with the tier, the triage probabilities, the model, the reviewed commit and the outcome, which finally gives us the record we were missing. An approval needs every thread opened by a person to be resolved, so the AI can never override a colleague's concern, and it is dropped whenever new commits are pushed.
 
-Several rules protect the approval. It requires that no thread opened by a person is unresolved, since the AI must not override a colleague's concern. Projects drop all approvals when new commits are pushed. If a rebase leaves the diff unchanged and the target branch touched none of the changed files, the approval is restored without a new review; otherwise only the new commits are reviewed.
+The biggest risk is text in the diff written for the reviewer rather than for people, which could hide a finding and let a simple change through. Sensitive paths and the size cap, which the model cannot influence, limit what can be simple, while every merge request is also scanned for text addressed to the reviewer, and a hit blocks the AI approval. A review that fails, times out or returns something malformed is never approved, and the merge request simply waits for a person.
 
-### The reviewer is an agent, and it doesn't read the description
+## What Anthropic does differently
 
-A model given only a diff can only comment on what it is shown. An agent such as Claude Code or Codex can read the rest of the repository, search for callers and check the history before raising a finding, and it carries our standards through the plugins the team already uses. Each review therefore runs as a short-lived job in Kubernetes, with read-only tools and cost limits.
+Shortly after I wrote the proposal, Anthropic described [how the Claude Code team reviews its own code](https://claude.dev/blog/solving-code-review-at-anthropic/), and it was reassuring to see how much overlapped. They layer several checks rather than relying on one, set the risk tier from the change and not from who wrote it, [read the reviewer's instructions from the base branch](https://claude.dev/blog/how-the-claude-code-team-thinks-about-verification/) so that a change cannot rewrite its own rules, and turn past incidents and reverts into a test set for the reviewer.
 
-Inside it, each dimension of the review is a focused subagent: intent, correctness, tests, standards, design, behaviour under retries when workflows or external writes change, and, for complex merge requests, architecture and coherence. Each one receives the diff and its own rubric, but not the merge request description or the ticket, so it checks the code rather than the author's account of it. Only the intent check compares the two, by listing every behaviour the diff changes and then reading the description.
-
-### Rules for code written by agents
-
-The rubrics name the problems I see most often in merge requests written by agents. Tests should be in proportion to the behaviour changed, one per rule, and a test that cannot fail, or only asserts on a mock, is a finding. For each test the reviewer has to name a one-line bug that it would not catch. Documentation contradicting itself or the code is a finding, as is history written into comments, such as "used to" or a ticket number. On complex changes, every new option or mode needs a user today, whether a caller, a configuration or a test.
-
-The check I care about most is coherence. Many changes can each look fine on their own, yet together leave several ways of doing the same thing, so every later change needs more context and work slows down. The coherence check flags a merge request that adds a second way of doing something the codebase already does, starts a migration without finishing it, relies on undocumented assumptions about another module, or works around complexity it could remove. Since small changes add second ways as often as large ones, simple merge requests get a lighter version of the same check.
-
-### Context from other repositories, cheaply
-
-Complex reviews receive context from the repositories a change depends on, which is where I expect to beat a reviewer that sees only the diff. Each repository declares its context in a file read from the target branch, so a merge request cannot widen its own context. To keep the cost down, an entry applies only when certain paths change, only the architecture and coherence checks receive it, and each starts from a short card per repository describing its purpose, public contracts and conventions, cached by commit. Raw code is read only when the card is not enough. When a public interface changes, the architecture check lists the repositories that would break.
-
-### A service, not a CI job
-
-The first version of the proposal ran the review as CI jobs, and the feedback from colleagues identified three problems with it. A CI job reruns on every push, including rebases, thus wasting tokens. It cannot see changes that arrive without a push, such as a resolved thread or a draft marked ready. Finally, merge request pipelines run the configuration from the merge request's own branch, so they cannot hold protected keys. The reviewer was therefore turned into a small GitLab app, which reviews when a merge request is opened or marked ready, and again only when the diff changes or someone mentions it.
-
-### Prompt injection
-
-Once the AI can approve and merge, the main risk is text in the diff aimed at the reviewer. The model returns only findings and probabilities, so it cannot grant an approval directly, yet an injection could hide a finding and let a simple merge request through. The rules the model cannot influence, such as sensitive paths and size, limit which changes can be simple, while the app also scans every merge request for text addressed to the reviewer, and a hit blocks the AI approval. A failed, timed-out or malformed review is never approved, a secret scan runs before every model call, and if the reviewer fails, the merge request waits for a person instead of being blocked.
-
-## How Anthropic does it, and where we differ
-
-Anthropic has since described how the Claude Code team reviews its own code, and the overlap is reassuring. They layer checks rather than relying on any single one, set the risk tier from the change and not from its author, read the reviewer's instructions from the base branch so that a change cannot alter its own judge, and turn past incidents and reverts into an evaluation set for the reviewer.
-
-There are three differences worth noting. First, an agent's approval never counts as a person's approval for them, whereas in our design an AI approval is accepted as the review of record for simple merge requests, although complex ones are never merged automatically. Second, they found that a single, well-tuned reviewer often does better than stacking a second, more expensive one, whereas our complex tier adds a verification pass, which the benchmark will have to justify. Third, they cap the number of review rounds after one of their pull requests went through more than fifty rounds overnight. We have no cap yet, and their numbers make a strong case for adding one before the rollout.
-
-Their answer to review's second job is also worth borrowing. Instead of reading trivial diffs line by line, people ask the agent for an explainer of the part of the code they are about to change. That replaces the knowledge sharing we lose when people stop reading simple merge requests, provided someone actually asks.
-
-## How we will know if it works
-
-The rollout is staged so that every step produces evidence before the next one:
-
-1. Run in shadow mode on three pilot repositories. Findings and the would-be approval are stored next to the existing reviewer's comments and the comments left by people, which gives recall against both and the issues only one of them caught.
-2. Benchmark on a labelled set of past merge requests, each linked to the fixes, reverts and incidents that followed it, with the labels checked by a person.
-3. Post findings as comments, then approve while people still merge everything.
-4. Enable automatic merging for simple merge requests only once the false-simple rate is close to zero.
-
-The false-simple rate, the share of merge requests triaged as simple that a person would label complex, is the number that gates everything else. The others are the share of merge requests merged without a human review, the share of findings that lead to a code change, the incidents and reverts traced back to an AI-approved merge request, and the cost per tier against the bill of the reviewer we have today.
+The differences, however, are worth thinking about. For them, an agent's approval never counts as a person's, whereas in our design an AI approval is enough for simple merge requests, although complex ones are never merged automatically. They also found that one well-tuned reviewer often does better than adding a second, more expensive one, while our complex tier adds a verification pass, which our benchmark will have to justify. Finally, they limit the number of review rounds, after one of their pull requests went through more than fifty rounds overnight. We have no such limit yet, and their numbers make a strong case for adding one before we roll out.
 
 ## Trade-offs and next steps
 
-The biggest trade-off is the one Anthropic's numbers can hide. A team that stops reading simple changes stops learning from them, and nothing in this design gives that back automatically. Shared knowledge now has to be built on purpose, through design discussions, explainers and colleagues reviewing the core logic of every feature.
+The rollout is staged so that each step produces evidence for the next. The reviewer will first run in shadow mode on three repositories, storing its findings next to those of the existing reviewer and the comments left by people, and will be benchmarked on past merge requests linked to the fixes, reverts and incidents that followed them. Only then will it comment, then approve while people still merge, and finally merge simple changes on its own, once almost no merge request triaged as simple turns out to be complex when a person looks at it.
 
-The second is cost. Every merge request other than a dependency update now gets a review, which costs more tokens than reviewing only the deep ones, even though that is exactly what saves human time on the simple ones. Turn caps, timeouts, caching, incremental reviews and skipping rebases with an unchanged diff are meant to keep it bounded, and each run records its cost so the defaults can be set from real data rather than guesses.
+The trade-off I worry about most is the second job of review. A team that stops reading simple changes also stops learning from them, and nothing in this design gives that back on its own. Anthropic's answer is to ask the agent for an explainer of the code you are about to change, which works only if people actually ask. For us, shared understanding will have to be built on purpose, through design discussions and through colleagues still reviewing the core logic of every feature.
 
-Finally, normal-effort merge requests are treated as complex for now. If the advanced model proves too expensive for them, a middle tier can be added later.
+The other trade-off is cost, since every merge request other than a dependency update now gets reviewed. Turn caps, timeouts, incremental reviews and skipping rebases with an unchanged diff should keep it bounded, and since every run records what it cost, the defaults will be set from real data rather than guesses.
 
 <div class="callout">
 
-## If you only do one thing
+## What I took away
 
-Let code, not the model, decide which changes are simple. A model is good at estimating how risky a change looks, and the probabilities it returns are useful, yet the rule that turns them into "no person needs to read this" should be a few lines anyone can review, with sensitive paths, a size cap and a default of "complex" whenever anything is uncertain.
+When I started, I thought the problem was finding a better AI reviewer. In hindsight, the reviewer is the easy part. The hard question is deciding which changes nobody needs to read, and who is accountable when one of them breaks, which is as much a question about the team as about the model. Two of the biggest changes to the design came from colleagues rather than from me: running it as an app instead of a CI job, and letting it merge simple changes at all, which wasn't in my first draft. I expect the line between simple and complex to keep moving the same way, once the benchmark and the first months in shadow mode show us where it should really be.
 
 </div>
 
