@@ -8,7 +8,7 @@ cover: ../../assets/covers/ai-code-review-bottleneck.png
 coverAlt: "Before and after diagram: on the left, five merge requests all wait in one queue for human review; on the right, AI triage splits them into simple ones, reviewed by a fast model and merged automatically, and complex ones, reviewed in depth with the author deciding whether a person reads them too."
 ---
 
-Since most of my code is now written with coding agents, opening a merge request takes a fraction of the time it used to. Reviewing one, however, takes exactly as long as before, so the time saved while writing the code is now spent waiting for someone to read it. As a result, the slowest part of shipping a change is no longer writing it but getting it reviewed.
+With coding agents writing most of the code, opening a merge request takes a fraction of the time it used to. Reviewing one, however, takes exactly as long as before, so the time saved while writing the code is now spent waiting for someone to read it. As a result, the slowest part of shipping a change is no longer writing it but getting it reviewed.
 
 This is not a problem specific to my team. Anthropic [reports](https://claude.dev/blog/solving-code-review-at-anthropic/) that the changes landing in its monorepo grew from about 2,500 a day in May 2026 to more than 30,000 in September, and its [playbook for agent-driven development](https://claude.com/resources/articles/the-ai-native-sdlc-playbook) starts from the observation that "code is no longer the bottleneck". Whatever still runs at human speed becomes the new bottleneck, and code review is the biggest part of it.
 
