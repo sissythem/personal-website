@@ -3,7 +3,7 @@ title: Code review is the new bottleneck
 description: Coding agents made writing code cheap, so the time moved to reviewing it. This is the tiered AI review I designed so that people only read the merge requests that need them.
 pubDate: 2026-11-22
 tags: [code-review, ai-agents, ci-cd]
-draft: true
+draft: false
 cover: ../../assets/covers/ai-code-review-bottleneck.png
 coverAlt: "Before and after diagram: on the left, five merge requests all wait in one queue for human review; on the right, AI triage splits them into simple ones, reviewed by a fast model and merged automatically, and complex ones, reviewed in depth with the author deciding whether a person reads them too."
 ---
