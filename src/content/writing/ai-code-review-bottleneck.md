@@ -4,6 +4,8 @@ description: Coding agents made writing code cheap, so the time moved to reviewi
 pubDate: 2026-11-22
 tags: [code-review, ai-agents, ci-cd]
 draft: true
+cover: ../../assets/covers/ai-code-review-bottleneck.png
+coverAlt: "Before and after diagram: on the left, five merge requests all wait in one queue for human review; on the right, AI triage splits them into simple ones, reviewed by a fast model and merged automatically, and complex ones, reviewed in depth with the author deciding whether a person reads them too."
 ---
 
 Since most of my code is now written with coding agents, opening a merge request takes a fraction of the time it used to. Reviewing one, however, takes exactly as long as before, so the time saved while writing the code is now spent waiting for someone to read it. As a result, the slowest part of shipping a change is no longer writing it but getting it reviewed.
