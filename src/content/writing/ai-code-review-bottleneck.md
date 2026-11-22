@@ -10,7 +10,7 @@ Since most of my code is now written with coding agents, opening a merge request
 
 This is not a problem specific to my team. Anthropic [reports](https://claude.dev/blog/solving-code-review-at-anthropic/) that the changes landing in its monorepo grew from about 2,500 a day in May 2026 to more than 30,000 in September, and its [playbook for agent-driven development](https://claude.com/resources/articles/the-ai-native-sdlc-playbook) starts from the observation that "code is no longer the bottleneck". Whatever still runs at human speed becomes the new bottleneck, and code review is the biggest part of it.
 
-Over the last month I have been working on a tiered AI review for our merge requests, where an AI reviews every change, and people review only the ones that need them.
+One way out is a tiered review, in which an AI reviews every merge request and people read only the ones that really need them. This post describes the one I designed for my team: why adding an AI reviewer was not enough on its own, how it decides which changes are simple enough to skip a person, and how it compares with the way Anthropic reviews its own code.
 
 ## How review became the bottleneck
 
