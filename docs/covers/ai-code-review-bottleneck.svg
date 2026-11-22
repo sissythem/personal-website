@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" font-family="Inter">
+  <!-- Cover for "Code review is the new bottleneck". Render with docs/covers/README.md. -->
+  <defs>
+    <g id="pass">
+      <circle r="12" fill="#2dd4bf"/>
+      <path d="M-6 0 l4.5 4.5 l8 -9" fill="none" stroke="#121214" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g id="wait">
+      <circle r="12" fill="#fbbf24"/>
+      <path d="M0 -6 V0 L4 3" fill="none" stroke="#121214" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g id="person">
+      <circle r="12" fill="#a78bfa"/>
+      <circle cx="0" cy="-3" r="3.5" fill="#121214"/>
+      <path d="M-6 7 a6 6 0 0 1 12 0" fill="#121214"/>
+    </g>
+  </defs>
+
+  <rect width="1200" height="627" fill="#121214"/>
+  <rect width="1200" height="8" fill="#a78bfa"/>
+  <line x1="600" y1="72" x2="600" y2="570" stroke="#2b2b32" stroke-width="2"/>
+
+  <!-- Before: every merge request waits for a person -->
+  <text x="64" y="100" font-size="17" font-weight="600" letter-spacing="2" fill="#9a9aa6">BEFORE</text>
+  <text x="64" y="144" font-size="34" font-weight="700" letter-spacing="-0.6" fill="#ececf1">One queue for people</text>
+
+  <g font-size="16" font-weight="600" text-anchor="middle" fill="#ececf1">
+    <g fill="#1b1b1f" stroke="#2b2b32" stroke-width="2">
+      <rect x="64" y="186" width="84" height="52" rx="10"/><rect x="167" y="186" width="84" height="52" rx="10"/>
+      <rect x="270" y="186" width="84" height="52" rx="10"/><rect x="373" y="186" width="84" height="52" rx="10"/>
+      <rect x="476" y="186" width="84" height="52" rx="10"/>
+    </g>
+    <text x="106" y="218">MR 1</text><text x="209" y="218">MR 2</text><text x="312" y="218">MR 3</text>
+    <text x="415" y="218">MR 4</text><text x="518" y="218">MR 5</text>
+  </g>
+
+  <g stroke="#fbbf24" stroke-width="2" stroke-opacity="0.55" fill="none">
+    <path d="M106 238 L312 350"/><path d="M209 238 L312 350"/><path d="M312 238 L312 350"/>
+    <path d="M415 238 L312 350"/><path d="M518 238 L312 350"/>
+  </g>
+
+  <rect x="197" y="350" width="230" height="58" rx="12" fill="#1b1b1f" stroke="#fbbf24" stroke-width="2"/>
+  <text x="312" y="386" font-size="20" font-weight="600" text-anchor="middle" fill="#ececf1">human review</text>
+
+  <use href="#wait" x="106" y="456"/><use href="#wait" x="209" y="456"/><use href="#wait" x="312" y="456"/>
+  <use href="#wait" x="415" y="456"/><use href="#wait" x="518" y="456"/>
+
+  <text x="64" y="528" font-size="19" fill="#9a9aa6">Agents write changes faster than</text>
+  <text x="64" y="554" font-size="19" fill="#9a9aa6">anyone can read them.</text>
+
+  <!-- After: tiered review -->
+  <text x="640" y="100" font-size="17" font-weight="600" letter-spacing="2" fill="#a78bfa">AFTER</text>
+  <text x="640" y="144" font-size="34" font-weight="700" letter-spacing="-0.6" fill="#ececf1">Tiered review</text>
+
+  <rect x="773" y="186" width="230" height="58" rx="12" fill="#a78bfa"/>
+  <text x="888" y="222" font-size="20" font-weight="700" text-anchor="middle" fill="#17121f">AI triage</text>
+
+  <g stroke-width="2" fill="none">
+    <path d="M888 244 L742 302" stroke="#2dd4bf"/>
+    <path d="M888 244 L1034 302" stroke="#a78bfa"/>
+  </g>
+
+  <g font-size="18" font-weight="600" text-anchor="middle">
+    <rect x="640" y="302" width="204" height="52" rx="10" fill="#1b1b1f" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="742" y="334" fill="#ececf1">simple</text>
+    <rect x="932" y="302" width="204" height="52" rx="10" fill="#1b1b1f" stroke="#a78bfa" stroke-width="2"/>
+    <text x="1034" y="334" fill="#ececf1">complex</text>
+  </g>
+
+  <g font-size="16" fill="#9a9aa6" text-anchor="middle">
+    <text x="742" y="392">fast AI review</text>
+    <text x="742" y="414">auto-merge</text>
+    <text x="1034" y="392">deep AI review</text>
+    <text x="1034" y="414">author decides</text>
+  </g>
+
+  <use href="#pass" x="702" y="456"/><use href="#pass" x="742" y="456"/><use href="#pass" x="782" y="456"/>
+  <use href="#pass" x="1014" y="456"/><use href="#person" x="1054" y="456"/>
+
+  <text x="640" y="528" font-size="19" fill="#9a9aa6">People read only the changes</text>
+  <text x="640" y="554" font-size="19" fill="#9a9aa6">that need them.</text>
+</svg>
